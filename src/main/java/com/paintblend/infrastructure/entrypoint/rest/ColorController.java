@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/colors")
 public class ColorController {
 
     private final GetColorByHexUseCase getColorByHexUseCase;
@@ -20,8 +19,8 @@ public class ColorController {
         this.getColorByHexUseCase = getColorByHexUseCase;
     }
 
-    @GetMapping("/{hex}")
-    public ResponseEntity<Object> getColorByHex(@PathVariable String hex) {
+    @GetMapping("/color")
+    public ResponseEntity<Object> getColorByHex(@RequestParam String hex) {
         Optional<Color> color = getColorByHexUseCase.getColorByHex(hex);
         if(color.isEmpty()) {
             ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(
@@ -31,11 +30,14 @@ public class ColorController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponseDTO);
         }
 
+        ColorResponseDTO.RGB rgb = new ColorResponseDTO.RGB(
+                color.get().rgb().red(),
+                color.get().rgb().green(),
+                color.get().rgb().blue()
+        );
         ColorResponseDTO colorResponseDTO = new ColorResponseDTO(
                 color.get().hex(),
-                color.get().red(),
-                color.get().yellow(),
-                color.get().blue()
+                rgb
         );
 
         return ResponseEntity.status(HttpStatus.OK).body(colorResponseDTO);
