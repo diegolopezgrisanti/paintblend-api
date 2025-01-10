@@ -22,13 +22,13 @@ public class GetColorByHexUseCase {
         }
     }
 
-    private Color convertHexToRgb(String hex) {
+    public Color convertHexToRgb(String hex) {
         int red = (int) hexToDecimal(hex.substring(0, 2));
         int green = (int) hexToDecimal(hex.substring(2, 4));
         int blue = (int) hexToDecimal(hex.substring(4, 6));
 
         Color.RGB rgb = new Color.RGB(red, green, blue);
-        return new Color(hex, rgb);
+        return new Color(hex, rgb, null);
     }
 
     private double hexToDecimal(String hex) {

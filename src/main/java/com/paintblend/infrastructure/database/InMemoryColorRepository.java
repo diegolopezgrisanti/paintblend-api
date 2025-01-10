@@ -7,23 +7,37 @@ import java.util.*;
 
 public class InMemoryColorRepository implements ColorRepository {
 
-    Color.RGB rgbColor1 = new Color.RGB(162, 59, 92);
-    Color color1 = new Color(
-            "A23B5C",
-            rgbColor1
+    private final Map<String, Color> colorMap = new HashMap<>();
+
+    Color redColor = new Color(
+            "FF0000",
+            new Color.RGB(255, 0, 0),
+            new Color.RYB(255, 0, 0)
     );
 
-    Color.RGB rgbColor2 = new Color.RGB(79, 155, 68);
-    Color color2 = new Color(
-            "4F9B44",
-            rgbColor2
+    Color limeColor = new Color(
+            "00FF00",
+            new Color.RGB(0, 255, 0),
+            new Color.RYB(0, 255, 255)
     );
 
-    Map<String, Color> colorMap = new HashMap<>();
+    Color blueColor = new Color(
+            "0000FF",
+            new Color.RGB(0, 0, 255),
+            new Color.RYB(0, 0, 255)
+    );
+
+    Color yellowColor = new Color(
+            "FFFF00",
+            new Color.RGB(255, 255, 0),
+            new Color.RYB(0, 255, 0)
+    );
 
     public InMemoryColorRepository() {
-        colorMap.put(color1.hex(), color1);
-        colorMap.put(color2.hex(), color2);
+        colorMap.put(redColor.hex(), redColor);
+        colorMap.put(limeColor.hex(), limeColor);
+        colorMap.put(blueColor.hex(), blueColor);
+        colorMap.put(yellowColor.hex(), yellowColor);
     }
 
     @Override

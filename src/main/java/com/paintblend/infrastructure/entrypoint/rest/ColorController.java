@@ -3,7 +3,6 @@ package com.paintblend.infrastructure.entrypoint.rest;
 import com.paintblend.application.getcolorbyhex.GetColorByHexUseCase;
 import com.paintblend.domain.color.Color;
 import com.paintblend.infrastructure.entrypoint.rest.response.ColorResponseDTO;
-import com.paintblend.infrastructure.entrypoint.rest.response.error.ErrorResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,25 +20,32 @@ public class ColorController {
 
     @GetMapping("/color")
     public ResponseEntity<Object> getColorByHex(@RequestParam String hex) {
-        Optional<Color> color = getColorByHexUseCase.getColorByHex(hex);
-        if(color.isEmpty()) {
-            ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(
-                    "No matching color proportions were found for the specified hex color."
-            );
+        Optional<Color> colorOpt = getColorByHexUseCase.getColorByHex(hex);
+        if(colorOpt.isPresent()) {
+            return ResponseEntity.status(HttpStatus.OK).body(createColorResponse(colorOpt.get()));
 
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponseDTO);
         }
 
+        Color generatedColor = getColorByHexUseCase.convertHexToRgb(hex);
+        return ResponseEntity.status(HttpStatus.OK).body(createColorResponse(generatedColor));
+    }
+
+    private ColorResponseDTO createColorResponse(Color color) {
         ColorResponseDTO.RGB rgb = new ColorResponseDTO.RGB(
-                color.get().rgb().red(),
-                color.get().rgb().green(),
-                color.get().rgb().blue()
-        );
-        ColorResponseDTO colorResponseDTO = new ColorResponseDTO(
-                color.get().hex(),
-                rgb
+                color.rgb().red(),
+                color.rgb().green(),
+                color.rgb().blue()
         );
 
-        return ResponseEntity.status(HttpStatus.OK).body(colorResponseDTO);
+        ColorResponseDTO.RYB ryb = null;
+        if (color.ryb() != null) {
+            ryb = new ColorResponseDTO.RYB(
+                    color.ryb().red(),
+                    color.ryb().yellow(),
+                    color.ryb().blue()
+            );
+        }
+
+        return new ColorResponseDTO(color.hex(), rgb, ryb);
     }
 }

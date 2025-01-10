@@ -19,12 +19,16 @@ class InMemoryColorRepositoryIntegrationTest {
     @Test
     void shouldReturnAnColorByHex() {
         // WHEN
-        Optional<Color> result = colorRepository.getColorByHex("A23B5C");
+        Optional<Color> result = colorRepository.getColorByHex("0000FF");
 
         // THEN
         assertThat(result)
                 .isPresent()
-                .contains(new Color("A23B5C", new Color.RGB(162,59, 92)));
+                .hasValueSatisfying(color -> {
+                    assertThat(color.hex()).isEqualTo("0000FF");
+                    assertThat(color.rgb()).isEqualTo(new Color.RGB(0, 0, 255));
+                    assertThat(color.ryb()).isEqualTo(new Color.RYB(0, 0, 255));
+                });
     }
 
     @Test
