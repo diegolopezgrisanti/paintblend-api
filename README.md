@@ -66,8 +66,8 @@ To run the tests:
 
 For more information, refer to the following resources:
 
-- Spring Boot Documentation
-- Gradle Documentation
-- JDK Documentation
+- [Spring Boot Documentation](https://spring.io/projects/spring-boot)
+- [Gradle Documentation](https://docs.gradle.org/current/userguide/userguide.html)
+- [JDK Documentation](https://docs.oracle.com/en/java/)
 
 ---
