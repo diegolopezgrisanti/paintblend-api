@@ -14,6 +14,25 @@ public class GetColorByHexUseCase {
     }
 
     public Optional<Color> getColorByHex(String hex) {
-        return colorRepository.getColorByHex(hex);
+        Optional<Color> color = colorRepository.getColorByHex(hex);
+        if (color.isPresent()) {
+            return color;
+        } else {
+            return Optional.of(convertHexToRgb(hex));
+        }
     }
+
+    private Color convertHexToRgb(String hex) {
+        int red = (int) hexToDecimal(hex.substring(0, 2));
+        int green = (int) hexToDecimal(hex.substring(2, 4));
+        int blue = (int) hexToDecimal(hex.substring(4, 6));
+
+        Color.RGB rgb = new Color.RGB(red, green, blue);
+        return new Color(hex, rgb);
+    }
+
+    private double hexToDecimal(String hex) {
+        return Integer.parseInt(hex, 16);
+    }
+
 }

@@ -19,11 +19,10 @@ class GetColorByHexUseCaseTest {
     void shouldReturnColorByHex() {
         // GIVEN
         String hexColor = "A23B5C";
+        Color.RGB rgbColor = new Color.RGB(162, 59, 92);
         Color expectedColor = new Color(
                 hexColor,
-                6.35,
-                8.82,
-                3.64
+                rgbColor
         );
 
         // WHEN

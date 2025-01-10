@@ -24,7 +24,7 @@ class InMemoryColorRepositoryIntegrationTest {
         // THEN
         assertThat(result)
                 .isPresent()
-                .contains(new Color("A23B5C", 6.35, 8.82, 3.64));
+                .contains(new Color("A23B5C", new Color.RGB(162,59, 92)));
     }
 
     @Test
