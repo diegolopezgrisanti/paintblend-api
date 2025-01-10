@@ -1,6 +1,6 @@
 # PaintBlend API
 
-PaintBlend API is a service that provides color management functionality, converting colors from HEX format to RGB, and dynamically generating color proportions when not stored in the in-memory database.
+PaintBlend API is a color management service that converts colors from HEX format to RGB. When the color is not stored in the in-memory database, the service dynamically generates the RGB values. Additionally, the RYB values are only available when the color is stored in the in-memory database; otherwise, they are returned as null.
 
 ## Prerequisites
 
@@ -13,7 +13,7 @@ Ensure you have the following installed before starting:
 
 ### 1. In-Memory Data Storage
 
-The service uses an in-memory `Map` to store HEX colors and their corresponding RGB representations. This is a temporary solution; no additional setup is required. The data will not persist between application restarts.
+The service uses an in-memory `Map` to store HEX colors and their corresponding RGB representations. This is a temporary solution that does not require additional setup. Please note that the data will not persist between application restarts.
 
 ### 2. Running the Service
 
@@ -44,10 +44,10 @@ To run the tests:
 
 ### `GET /color`
 
-- **Description**: Retrieves color data for the specified HEX code. If the color is not stored in the in-memory database, it generates the RGB values dynamically and adds them to the storage.
+- **Description**: Retrieves color data for the specified HEX code. If the color is stored in the in-memory database, it returns both RGB and RYB values. If the color is not found, it generates the RGB values dynamically, adds them to the in-memory storage, and returns the color with RGB and RYB values as `null`.
 - **Parameters**:
     - `hex` (required): The HEX color code (without the `#` prefix).
-- **Example Response**:
+- **Example Response when the color is in the database**:
   ```json
   {
     "hex": "008000",
@@ -55,8 +55,26 @@ To run the tests:
       "red": 0,
       "green": 128,
       "blue": 0
+    },
+    "ryb": {
+      "red": 0,
+      "yellow": 128,
+      "blue": 0
     }
   }
+  ```
+- **Example Response when the color is not in the database**:
+  ```json
+  {
+    "hex": "D47F2F",
+    "rgb": {
+      "red": 212,
+      "green": 127,
+      "blue": 47
+    },
+    "ryb": null
+  }
+  ```  
 
 ## Key Dependencies
 
