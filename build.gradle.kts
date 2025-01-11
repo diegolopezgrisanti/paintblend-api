@@ -18,9 +18,16 @@ repositories {
 }
 
 dependencies {
+	val JDBC = "3.4.1"
+	val H2 = "2.3.232"
+
 	implementation("org.springframework.boot:spring-boot-starter-web")
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	implementation("org.springframework.boot:spring-boot-starter-jdbc:$JDBC")
+	implementation("com.h2database:h2:$H2")
+
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+	testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
 tasks.withType<Test> {

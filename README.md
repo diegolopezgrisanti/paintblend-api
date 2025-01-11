@@ -1,6 +1,6 @@
 # PaintBlend API
 
-PaintBlend API is a color management service that converts colors from HEX format to RGB. When the color is not stored in the in-memory database, the service dynamically generates the RGB values. Additionally, the RYB values are only available when the color is stored in the in-memory database; otherwise, they are returned as null.
+PaintBlend API is a color management service that converts colors from HEX format to RGB. If a color is not stored in the database, the service dynamically generates the RGB values. Additionally, the RYB values are only available when the color is stored in the database; otherwise, they are returned as null.
 
 ## Prerequisites
 
@@ -11,9 +11,9 @@ Ensure you have the following installed before starting:
 
 ## Local Environment Setup
 
-### 1. In-Memory Data Storage
+### 1. Database Configuration
 
-The service uses an in-memory `Map` to store HEX colors and their corresponding RGB representations. This is a temporary solution that does not require additional setup. Please note that the data will not persist between application restarts.
+The service uses an H2 database to store HEX colors and their corresponding RGB and RYB representations. The database is embedded, so no additional setup is required.
 
 ### 2. Running the Service
 
@@ -44,10 +44,14 @@ To run the tests:
 
 ### `GET /color`
 
-- **Description**: Retrieves color data for the specified HEX code. If the color is stored in the in-memory database, it returns both RGB and RYB values. If the color is not found, it generates the RGB values dynamically, adds them to the in-memory storage, and returns the color with RGB and RYB values as `null`.
-- **Parameters**:
-    - `hex` (required): The HEX color code (without the `#` prefix).
-- **Example Response when the color is in the database**:
+**Description**: Retrieves color data for the specified HEX code.
+- Retrieves color data for the specified HEX code.
+- If the color is not found, it generates the RGB values dynamically, adds them to the database, and returns the color with RYB values as null.
+
+**Parameters**:
+- `hex` (required): The HEX color code (without the `#` prefix).
+
+**Example Response (when the color is in the database)**:
   ```json
   {
     "hex": "008000",
@@ -63,7 +67,7 @@ To run the tests:
     }
   }
   ```
-- **Example Response when the color is not in the database**:
+- **Example Response (when the color is not in the database)**:
   ```json
   {
     "hex": "D47F2F",
@@ -79,6 +83,8 @@ To run the tests:
 ## Key Dependencies
 
 - **Spring Web:** The main dependency for building the service with Spring Boot.
+- **H2 Database:** An embedded relational database for storing colors persistently.
+- **Spring Data JDBC:** Used for interaction with the H2 database.
 
 ## Additional Documentation
 
@@ -86,6 +92,8 @@ For more information, refer to the following resources:
 
 - [Spring Boot Documentation](https://spring.io/projects/spring-boot)
 - [Gradle Documentation](https://docs.gradle.org/current/userguide/userguide.html)
+- [H2 Database Documentation](https://www.h2database.com/html/main.html)
+- [Spring Data JDBC Documentation](https://spring.io/projects/spring-data-jdbc)
 - [JDK Documentation](https://docs.oracle.com/en/java/)
 
 ---
