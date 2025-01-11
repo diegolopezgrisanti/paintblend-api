@@ -67,7 +67,7 @@ To run the tests:
     }
   }
   ```
-- **Example Response (when the color is not in the database)**:
+**Example Response (when the color is not in the database)**:
   ```json
   {
     "hex": "D47F2F",
