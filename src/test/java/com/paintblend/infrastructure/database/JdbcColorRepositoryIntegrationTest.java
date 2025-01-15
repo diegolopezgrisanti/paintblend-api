@@ -34,13 +34,17 @@ class JdbcColorRepositoryIntegrationTest {
     Color redColor = new Color(
             "FF0000",
             new Color.RGB(255, 0, 0),
-            new Color.RYB(255, 0, 0)
+            new Color.RYB(255, 0, 0),
+            new Color.CMY(0.0, 1.0, 1.0),
+            new Color.Parts(0, 1, 1)
     );
 
     Color limeColor = new Color(
             "00FF00",
             new Color.RGB(0, 255, 0),
-            new Color.RYB(0, 255, 255)
+            new Color.RYB(0, 255, 255),
+            new Color.CMY(1.0, 0.0, 1.0),
+            new Color.Parts(1, 0, 1)
     );
 
     @Test
@@ -61,16 +65,20 @@ class JdbcColorRepositoryIntegrationTest {
     private void givenExistingColor(Color color) {
         String rgbString = "rgb(" + color.rgb().red() + "," + color.rgb().green() + "," + color.rgb().blue() + ")";
         String rybString = "ryb(" + color.ryb().red() + "," + color.ryb().yellow() + "," + color.ryb().blue() + ")";
+        String cmyString = "cmy(" + color.cmy().cyan() + "," + color.cmy().magenta() + "," + color.cmy().yellow() + ")";
+        String partsString = "parts(" + color.parts().cyanParts() + "," + color.parts().magentaParts() + "," + color.parts().yellowParts() + ")";
 
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("hex", color.hex())
                 .addValue("rgb", rgbString)
-                .addValue("ryb", rybString);
+                .addValue("ryb", rybString)
+                .addValue("cmy", cmyString)
+                .addValue("parts", partsString);
 
         namedParameterJdbcTemplate.update(
                 """
-                        INSERT INTO colors (hex, rgb, ryb)
-                        VALUES (:hex, :rgb, :ryb)
+                        INSERT INTO colors (hex, rgb, ryb, cmy, parts)
+                        VALUES (:hex, :rgb, :ryb, :cmy, :parts)
                         """,
                 params
         );

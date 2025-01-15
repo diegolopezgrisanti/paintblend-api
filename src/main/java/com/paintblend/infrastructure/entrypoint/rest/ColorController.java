@@ -26,7 +26,7 @@ public class ColorController {
 
         }
 
-        Color generatedColor = getColorByHexUseCase.convertHexToRgb(hex);
+        Color generatedColor = getColorByHexUseCase.convertHexToColor(hex);
         return ResponseEntity.status(HttpStatus.OK).body(createColorResponse(generatedColor));
     }
 
@@ -46,6 +46,21 @@ public class ColorController {
             );
         }
 
-        return new ColorResponseDTO(color.hex(), rgb, ryb);
+        ColorResponseDTO.CMY cmy = new ColorResponseDTO.CMY(
+                color.cmy().cyan(),
+                color.cmy().magenta(),
+                color.cmy().yellow()
+        );
+
+        ColorResponseDTO.Parts parts = null;
+        if (color.parts() != null) {
+            parts = new ColorResponseDTO.Parts(
+                    color.parts().cyanParts(),
+                    color.parts().magentaParts(),
+                    color.parts().yellowParts()
+            );
+        }
+
+        return new ColorResponseDTO(color.hex(), rgb, ryb, cmy, parts);
     }
 }
