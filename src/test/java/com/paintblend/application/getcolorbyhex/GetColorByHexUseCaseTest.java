@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class GetColorByHexUseCaseTest {
@@ -15,7 +15,7 @@ class GetColorByHexUseCaseTest {
     private final GetColorByHexUseCase getColorByHexUseCase = new GetColorByHexUseCase(colorRepository);
 
     @Test
-    void shouldReturnColorByHexWithRYBValues() {
+    void shouldReturnColorFromRepositoryWhenExists() {
         // GIVEN
         String hexColor = "0000FF";
         Color.RGB rgbColor = new Color.RGB(0, 0, 255);
@@ -26,45 +26,33 @@ class GetColorByHexUseCaseTest {
         when(colorRepository.getColorByHex(hexColor)).thenReturn(Optional.of(expectedColor));
 
         // WHEN
-        Optional<Color> result = getColorByHexUseCase.getColorByHex(hexColor);
+        Color result = getColorByHexUseCase.getColorByHex(hexColor);
 
         // THEN
-        assertThat(result)
-                .isPresent()
-                .hasValueSatisfying(color -> {
-                    assertThat(color.hex()).isEqualTo(hexColor);
-                    assertThat(color.rgb()).isEqualTo(rgbColor);
-                    assertThat(color.ryb()).isEqualTo(rybColor);
-                    assertThat(color.cmy()).isEqualTo(cmyColor);
-                    assertThat(color.parts()).isEqualTo(partsColor);
-                });
+        assertEquals(expectedColor, result);
         verify(colorRepository).getColorByHex(hexColor);
     }
 
     @Test
-    void shouldReturnAnColorWithoutRYBAndPartsValues() {
+    void shouldGenerateColorWhenNotInRepository() {
         // GIVEN
         String hexColor = "A23B5C";
         when(colorRepository.getColorByHex(hexColor)).thenReturn(Optional.empty());
 
         // WHEN
-        Optional<Color> result = getColorByHexUseCase.getColorByHex(hexColor);
+        Color result = getColorByHexUseCase.getColorByHex(hexColor);
 
         // THEN
-        assertThat(result)
-                .isPresent()
-                .hasValueSatisfying(color -> {
-                    assertThat(color.hex()).isEqualTo(hexColor);
-                    assertThat(color.rgb()).isNotNull();
-                    assertThat(color.ryb()).isNull();
-                    assertThat(color.parts()).isNull();
-                    assertThat(color.rgb().red()).isEqualTo(162);
-                    assertThat(color.rgb().green()).isEqualTo(59);
-                    assertThat(color.rgb().blue()).isEqualTo(92);
-                    assertThat(color.cmy().cyan()).isEqualTo(0.3647);
-                    assertThat(color.cmy().magenta()).isEqualTo(0.7686);
-                    assertThat(color.cmy().yellow()).isEqualTo(0.6392);
-                });
+        assertNotNull(result);
+        assertEquals(hexColor, result.hex());
+        assertEquals(new Color.RGB(162, 59, 92), result.rgb());
+        assertNotNull(result.cmy());
+        assertEquals(0.3647, result.cmy().cyan());
+        assertEquals(0.7686, result.cmy().magenta());
+        assertEquals(0.6392, result.cmy().yellow());
+        assertNull(result.ryb());
+        assertNull(result.parts());
+
         verify(colorRepository).getColorByHex(hexColor);
     }
 
