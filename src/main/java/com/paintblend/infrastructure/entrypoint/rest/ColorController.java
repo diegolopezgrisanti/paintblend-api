@@ -7,8 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
 @RestController
 public class ColorController {
 
@@ -20,14 +18,24 @@ public class ColorController {
 
     @GetMapping("/color")
     public ResponseEntity<Object> getColorByHex(@RequestParam String hex) {
-        Optional<Color> colorOpt = getColorByHexUseCase.getColorByHex(hex);
-        if(colorOpt.isPresent()) {
-            return ResponseEntity.status(HttpStatus.OK).body(createColorResponse(colorOpt.get()));
+        if (!isValidHex(hex)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("The provided HEX code is invalid.");
+        }
+        hex = hex.startsWith("#") ? hex.substring(1) : hex;
 
+        Color color = getColorByHexUseCase.getColorByHex(hex);
+
+        if(color == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Color not found for the provided HEX code.");
         }
 
-        Color generatedColor = getColorByHexUseCase.convertHexToColor(hex);
-        return ResponseEntity.status(HttpStatus.OK).body(createColorResponse(generatedColor));
+        return ResponseEntity.status(HttpStatus.OK).body(createColorResponse(color));
+    }
+
+    private boolean isValidHex(String hex) {
+        return hex != null && hex.matches("^#?[0-9a-fA-F]{6}$");
     }
 
     private ColorResponseDTO createColorResponse(Color color) {
@@ -37,14 +45,12 @@ public class ColorController {
                 color.rgb().blue()
         );
 
-        ColorResponseDTO.RYB ryb = null;
-        if (color.ryb() != null) {
-            ryb = new ColorResponseDTO.RYB(
+        ColorResponseDTO.RYB ryb = color.ryb() != null ?
+            new ColorResponseDTO.RYB(
                     color.ryb().red(),
                     color.ryb().yellow(),
                     color.ryb().blue()
-            );
-        }
+            ) : null;
 
         ColorResponseDTO.CMY cmy = new ColorResponseDTO.CMY(
                 color.cmy().cyan(),
@@ -52,14 +58,12 @@ public class ColorController {
                 color.cmy().yellow()
         );
 
-        ColorResponseDTO.Parts parts = null;
-        if (color.parts() != null) {
-            parts = new ColorResponseDTO.Parts(
+        ColorResponseDTO.Parts parts = color.parts() != null ?
+            new ColorResponseDTO.Parts(
                     color.parts().cyanParts(),
                     color.parts().magentaParts(),
                     color.parts().yellowParts()
-            );
-        }
+            ) : null;
 
         return new ColorResponseDTO(color.hex(), rgb, ryb, cmy, parts);
     }

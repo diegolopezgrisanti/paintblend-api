@@ -48,7 +48,7 @@ class JdbcColorRepositoryIntegrationTest {
     );
 
     @Test
-    void shouldReturnAColorByHex() {
+    void shouldReturnColorWhenHexExistsInDatabase() {
         // GIVEN
         givenExistingColor(redColor);
         givenExistingColor(limeColor);
@@ -60,6 +60,15 @@ class JdbcColorRepositoryIntegrationTest {
         assertThat(result)
                 .isPresent()
                 .contains(redColor);
+    }
+
+    @Test
+    void shouldReturnEmptyWhenHexDoesNotExistInDatabase() {
+        // WHEN
+        Optional<Color> result = colorRepository.getColorByHex("NON_EXISTENT");
+
+        // THEN
+        assertThat(result).isNotPresent();
     }
 
     private void givenExistingColor(Color color) {
@@ -83,5 +92,4 @@ class JdbcColorRepositoryIntegrationTest {
                 params
         );
     }
-
 }

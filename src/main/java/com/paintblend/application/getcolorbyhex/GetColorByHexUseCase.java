@@ -5,7 +5,6 @@ import com.paintblend.domain.color.ColorRepository;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Optional;
 
 public class GetColorByHexUseCase {
 
@@ -15,13 +14,9 @@ public class GetColorByHexUseCase {
         this.colorRepository = colorRepository;
     }
 
-    public Optional<Color> getColorByHex(String hex) {
-        Optional<Color> color = colorRepository.getColorByHex(hex);
-        if (color.isPresent()) {
-            return color;
-        } else {
-            return Optional.of(convertHexToColor(hex));
-        }
+    public Color getColorByHex(String hex) {
+        return colorRepository.getColorByHex(hex)
+                .orElseGet(() -> convertHexToColor(hex));
     }
 
     public Color convertHexToColor(String hex) {
