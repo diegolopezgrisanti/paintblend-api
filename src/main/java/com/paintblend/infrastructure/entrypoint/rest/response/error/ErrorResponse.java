@@ -1,5 +1,5 @@
 package com.paintblend.infrastructure.entrypoint.rest.response.error;
 
-public record ErrorResponseDTO(
+public record ErrorResponse(
         String message
 ) {}
