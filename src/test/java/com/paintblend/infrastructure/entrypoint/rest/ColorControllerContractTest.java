@@ -62,7 +62,18 @@ class ColorControllerContractTest {
         mockMvc.perform(get("/color")
                         .param("hex", nonExistentHex))
                 .andExpect(status().isNotFound())
-                .andExpect(content().string("Color not found for the provided HEX code."));
+                .andExpect(jsonPath("$.message")
+                        .value("Color not found for the provided HEX code."));
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenHexIsInvalid() throws Exception {
+        String invalidHex = "ZZZZZZ";
+
+        mockMvc.perform(get("/color")
+                        .param("hex", invalidHex))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("The provided HEX code is invalid."));
     }
 
 }
